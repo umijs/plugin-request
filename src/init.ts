@@ -1,8 +1,8 @@
 import { RequestMethod, RequestOptionsInit, OnionMiddleware } from 'umi-request';
-import { message, notification } from '@alipay/bigfish/antd'
-import history from '@alipay/bigfish/sdk/history';
-import { get } from '@alipay/bigfish/util/lodash';
-import '@alipay/bigfish/antd/dist/antd.css';
+import { message, notification } from 'antd';
+import history from '@@/history';
+import get from 'lodash.get';
+import 'antd/dist/antd.css';
 
 interface IHandler {
   ( showType: number, response: ResponseStructure, request: { url: string, options: RequestOptionsInit} , config: IResponseParser, defaultHandler?: IHandler ): void;
@@ -14,7 +14,7 @@ export interface IResponseParser {
   showType?: ( response: ResponseStructure, request: { url: string, options: RequestOptionsInit} ) => number | number;
   handler?: IHandler;
   errorPage?: string;
-};
+}
 
 export interface RequestConfig extends RequestOptionsInit {
   responseParsers: IResponseParser[];
@@ -76,9 +76,11 @@ let defaultHandler: IHandler;
 defaultHandler = (showType, response, request, responseParserConfig) => {
   const { options = {} } = request;
   const { getResponse = false } = options;
-  const responseData = getResponse ? response.data : response
+  const responseData = getResponse ? response.data : response;
   const { errorMessage = '请求异常', errorCode = '' } = responseData;
   const { errorPage = DEFAULT_ERROR_PAGE } = responseParserConfig;
+
+  console.log(`showType`, showType);
 
   switch(showType) {
     case 0:
@@ -91,21 +93,19 @@ defaultHandler = (showType, response, request, responseParserConfig) => {
       notification.open({
         message: '请求出错!',
         description: errorMessage,
-      })
+      });
       break;
     case 9:
-      console.log('reponse showType is 9')
       history.push({
         pathname: errorPage,
         query: { errorCode, errorMessage }
-      })
+      });
       // 跳转到 404 页面
       break;
     default:
       break;
   }
-}
-
+};
 
 /**
  * 根据适配器将响应结果转化为规范接口
@@ -136,7 +136,6 @@ async function getResponseByAdaptor(adaptor: ((response: any ) =>  Promise<Respo
 function getResponseParserMiddleware(config: IResponseParser[]) {
   let responseParser: OnionMiddleware;
   responseParser = async (ctx, next) => {
-    console.log('[responseParser middleware]')
     await next();
 
     const { req } = ctx;
