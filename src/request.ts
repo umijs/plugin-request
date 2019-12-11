@@ -1,14 +1,13 @@
-import request, { extend, fetch } from 'umi-request';
+import request, { fetch } from 'umi-request';
 import __init__ from './init';
 
 // TODO: add this in bigfish
 // fetch.interceptors.request.use(chartSetInterceptor);
 
 fetch.interceptors.response.use((response) => {
-  console.log('resopnse')
   if (!response) return;
   // response.headers.append('hahahah', 'hahahah');
-  console.log(response.headers.get('Content-Type'));
+  // console.log(response.headers.get('Content-Type'));
   return response;
 });
 
@@ -20,8 +19,8 @@ fetch.interceptors.response.use((response) => {
 request.interceptors = fetch.interceptors;
 
 const __init_request__ = () => {
-  __init__(request)
+  __init__(request);
 };
 
-export { extend, fetch, __init_request__ };
-export default request;
+// export { extend, fetch, __init_request__ };
+export { request, __init_request__ };
