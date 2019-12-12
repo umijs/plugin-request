@@ -44,6 +44,7 @@
     "access": "public"
   },
   "dependencies": {
+    "umi-request": "^1.2.14",
     "antd": "^3.26.2",
     "lodash.get": "^4.4.2"
   }
