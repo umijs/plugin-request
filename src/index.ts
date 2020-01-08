@@ -8,7 +8,6 @@ export default function(api: IApi) {
   api.addUmiExports([
     {
       specifiers: ['request'],
-      type: 'type',
       source,
     },
   ]);
