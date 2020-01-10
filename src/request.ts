@@ -2,16 +2,6 @@ import request, { fetch } from 'umi-request';
 import __init__ from './init';
 
 // TODO: add this in bigfish
-// fetch.interceptors.request.use(chartSetInterceptor);
-
-fetch.interceptors.response.use((response) => {
-  if (!response) return;
-  // response.headers.append('hahahah', 'hahahah');
-  // console.log(response.headers.get('Content-Type'));
-  return response;
-});
-
-// TODO: add this in bigfish
 // 拓展请求内核中间件，支持 RPC 请求： request('alipay.client.xxx', { __umiRequestCoreType__: 'rpc', data: [], headers: {} })
 // request.use(rpcRequest, { core: true });
 
