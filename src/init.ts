@@ -1,11 +1,20 @@
-import { RequestMethod, RequestOptionsInit, OnionMiddleware } from 'umi-request';
+import { RequestMethod, RequestOptionsInit, OnionMiddleware, ResponseError } from 'umi-request';
 import { message, notification } from 'antd';
 import history from '@@/history';
 import get from 'lodash.get';
 import 'antd/dist/antd.css';
 
+interface IHandlerParams {
+  showType: number;
+  response: ResponseStructure;
+  request: { url: string, options: RequestOptionsInit};
+  config: IResponseParser;
+  defaultHandler?: () => void;
+  error?: ResponseError
+}
+
 interface IHandler {
-  ( showType: number, response: ResponseStructure, request: { url: string, options: RequestOptionsInit} , config: IResponseParser, defaultHandler?: IHandler ): void;
+  ( params: IHandlerParams ): void;
 }
 
 export interface IResponseParser {
@@ -33,6 +42,24 @@ export interface ResponseStructure {
 }
 
 const DEFAULT_ERROR_PAGE = '/exception';
+
+class ResError extends Error {
+
+  name: string;
+  data: any;
+  response: any;
+  request: { url: string, options: RequestOptionsInit };
+  type: string;
+
+  constructor(response: any, text: string, data: any, request: { url: string, options: RequestOptionsInit}, type: string = 'ResponseError') {
+    super(text || response.statusText);
+    this.name = 'ResponseError';
+    this.data = data;
+    this.response = response;
+    this.request = request;
+    this.type = type;
+  }
+}
 
 /**
  * 返回最终中间件列表
@@ -64,7 +91,8 @@ function checkIfMatch( include: string | RegExp | Function, url: string, options
  * @param response 响应结果
  */
 function defaultShowType (response: ResponseStructure): number {
-  return response.showType || 4;
+  if (response.showType === undefined) return 4;
+  return response.showType;
 }
 
 /**
@@ -73,16 +101,15 @@ function defaultShowType (response: ResponseStructure): number {
  * @param response 响应结果
  */
 let defaultHandler: IHandler;
-defaultHandler = (showType, response, request, responseParserConfig) => {
+defaultHandler = ({ showType, response, request, config: responseParserConfig }) => {
   const { options = {} } = request;
   const { getResponse = false } = options;
   const responseData = getResponse ? response.data : response;
-  const { errorMessage = '请求异常', errorCode = '' } = responseData;
+  const { errorMessage = '', errorCode = '' } = responseData;
   const { errorPage = DEFAULT_ERROR_PAGE } = responseParserConfig;
 
-  console.log(`showType`, showType);
-
-  switch(showType) {
+  const showType2Num = +showType; // 隐式转换
+  switch(showType2Num) {
     case 0:
       // do nothing
       break;
@@ -106,6 +133,7 @@ defaultHandler = (showType, response, request, responseParserConfig) => {
       break;
   }
 };
+
 
 /**
  * 根据适配器将响应结果转化为规范接口
@@ -158,7 +186,6 @@ function getResponseParserMiddleware(config: IResponseParser[]) {
 
     const { showType = defaultShowType, handler = defaultHandler, adaptor = undefined } = matchConfig || {};
 
-    // todo: adaptor 处理、接口解析、错误处理
     if (adaptor) {
       const responseByAdaptor = await getResponseByAdaptor(adaptor, ctx.res);
       ctx.res = responseByAdaptor;
@@ -168,8 +195,17 @@ function getResponseParserMiddleware(config: IResponseParser[]) {
     const resData = getResponse ? res.data : res;
     const { success } = resData;
     if (success) return;
-    handler(showType(res, req), res, req, matchConfig, defaultHandler);
 
+    const showTypeResult = showType(res, req);
+
+    handler({
+      showType: showTypeResult, 
+      response: res, 
+      request: req, 
+      config: matchConfig, 
+      defaultHandler: () => defaultHandler({ showType: showTypeResult, response: res, request: req, config: matchConfig }),
+    });
+    throw new ResError(res, '', resData, req, 'ResponseSuccessFail');
   }
   return responseParser;
 }

@@ -211,6 +211,16 @@ export const request = {
 
 Full example can find in [./example](https://github.com/umijs/plugin-request/tree/master/example).
 
+## Contribute
+
+1. npm i && npm i umi@latest
+
+2. npm run build
+
+3. cd example
+
+4. npx umi dev
+
 ## LICENSE
 
 MIT
