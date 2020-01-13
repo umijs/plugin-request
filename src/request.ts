@@ -1,7 +1,5 @@
 /**
- * request 网络请求工具
- * 提供诸如参数序列号, 缓存, 超时, 字符编码处理, 错误处理等常用功能,
- * 详情参考api文档: https://bigfish.alipay.com/doc/api#request
+ * Base on https://github.com/umijs/umi-request
  */
 import { extend, Context, RequestOptionsInit, OnionMiddleware } from 'umi-request';
 import { message, notification } from 'antd';
@@ -48,7 +46,6 @@ const errorAdaptor = requestConfig.errorConfig?.adaptor || (resData => resData);
 
 export const request = extend({
   errorHandler: (error: RequestError) => {
-    console.log('get error', error);
     let errorInfo: ErrorInfoStructure | undefined;
     if (error.name === 'ResponseError' && error.data) {
       errorInfo = errorAdaptor(error.data);
