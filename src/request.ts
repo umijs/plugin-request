@@ -10,9 +10,7 @@ export interface RequestConfig extends RequestOptionsInit {
     errorPage?: string;
     adaptor?: (resData: any, ctx?: Context) => ErrorInfoStructure;
   };
-  middlewares?: (
-    defaultMiddlewares: OnionMiddleware[],
-  ) => OnionMiddleware[] | OnionMiddleware[];
+  middlewares?: OnionMiddleware[];
 }
 
 export enum ErrorShowType {
@@ -49,9 +47,11 @@ export const request = extend({
     let errorInfo: ErrorInfoStructure | undefined;
     if (error.name === 'ResponseError' && error.data) {
       errorInfo = errorAdaptor(error.data);
-    } else if (error.name === 'BizError') {
-      errorInfo = error.info;
+      error.message = errorInfo?.errorMessage || error.message;
+      error.data = error.data;
+      error.info = errorInfo;
     }
+    errorInfo = error.info;
 
     if (errorInfo) {
       const errorMessage = errorInfo?.errorMessage;
@@ -110,4 +110,10 @@ request.use(async (ctx, next) => {
     error.info = errorInfo;
     throw error;
   }
+});
+
+// Add user custom middlewares
+const customMiddlewares = requestConfig.middlewares || [];
+customMiddlewares.forEach(mw => {
+  request.use(mw);
 });
