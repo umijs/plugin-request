@@ -1,11 +1,13 @@
 import createTestServer from 'create-test-server';
-import { request } from '../request';
+import { request } from '../src/request';
 
 jest.mock(
   'runtimeConfig',
   () => {
     return {
-      errorConfig: {},
+      errorConfig: {
+        errorPage: '/custom/errorPage',
+      },
       middlewares: [
         async (ctx, next) => {
           await next();
@@ -36,6 +38,20 @@ jest.mock('antd', () => {
     },
   };
 });
+
+jest.mock(
+  '@@/history',
+  () => {
+    return {
+      push: ({ pathname, query }) => {
+        throw new Error(
+          `${pathname}?errorCode=${query.errorCode}&errorMessage=${query.errorMessage}`,
+        );
+      },
+    };
+  },
+  { virtual: true },
+);
 
 describe('antd error tip', () => {
   let server;
@@ -111,6 +127,25 @@ describe('antd error tip', () => {
       const response = await request(prefix('/test/failed4'));
     } catch (e) {
       expect(e.message).toEqual('notification.open');
+    }
+  });
+
+  it('redirect', async () => {
+    const rawData = {
+      success: false,
+      errorMessage: 'test message',
+      errorCode: '505',
+      showType: 9,
+    };
+    server.get('/test/failed9', (req, res) => {
+      res.send(rawData);
+    });
+    try {
+      const response = await request(prefix('/test/failed9'));
+    } catch (e) {
+      expect(e.message).toEqual(
+        '/custom/errorPage?errorCode=505&errorMessage=test message',
+      );
     }
   });
 });

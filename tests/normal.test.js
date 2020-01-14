@@ -1,11 +1,10 @@
 import createTestServer from 'create-test-server';
-import { request } from '../request';
+import { request } from '../src/request';
 
 jest.mock(
   'runtimeConfig',
   () => {
     return {
-      errorConfig: {},
       middlewares: [
         async (ctx, next) => {
           await next();

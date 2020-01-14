@@ -2,4 +2,4 @@ const history = {
   push: () => {},
 };
 
-export default {};
+export default history;

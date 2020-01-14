@@ -132,10 +132,11 @@ export const request = {
 1. When the response status code is not 200, the errorhandler will still be triggered. Developers can override the default errorhandler through configuration
 2. When the response status code is 200 and body.success is true, no processing will be performed
 3. When the response status code is 200 and 'body.success' is false, different error handling will be done according to the value of 'body.showtype' (default is 4)
-   1. showType === 0, silent, do nonting;
-   2. showType === 1, light message： antd.message.error(body.errorMessage)
-   3. showType === 4, hard notification： antd.notification.open({ message: 'Request failed！', description: body.errorMessage })
-   4. showType === 9, page redirect：like antd-pro，default page is '/exception?errorCode=xxx&errorMessage=xxx'
+   - showType === 0, silent, do nonting;
+   - showType === 1, warn message： antd.message.warn(body.errorMessage)
+   - showType === 2, error message： antd.message.error(body.errorMessage)
+   - showType === 4, notification： antd.notification.open({ message: 'Request failed！', description: body.errorMessage })
+   - showType === 9, page redirect：like antd-pro，default page is '/exception?errorCode=xxx&errorMessage=xxx'
 
 If you want to override all or part of the default error handling, just configure the handler:
 
@@ -147,6 +148,9 @@ export const request = {
         // your code
       }
     }
+  },
+  errorConfig: {
+    errorPage: '/exception', // redirect when show type is 9
   },
 };
 ```

@@ -3,6 +3,7 @@
  */
 import { extend, Context, RequestOptionsInit, OnionMiddleware } from 'umi-request';
 import { message, notification } from 'antd';
+// @ts-ignore
 import history from '@@/history';
 
 export interface RequestConfig extends RequestOptionsInit {
