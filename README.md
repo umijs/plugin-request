@@ -47,21 +47,33 @@ export default () => {
     })();
   }, []);
 
-  return (<>
-    <h1>@umijs/plugin-request</h1>
-    <h2>Users</h2>
-    <ul>
-      { users.map(u => <li key={u}>{u}</li>) }
-    </ul>
-    <h2>Test Request</h2>
-    <ul>
-      <li><button onClick={testRequest.bind(null, { showType: 0 })}>showType 0</button></li>
-      <li><button onClick={testRequest.bind(null, { showType: 1 })}>showType 1</button></li>
-      <li><button onClick={testRequest.bind(null, { showType: 4 })}>showType 4</button></li>
-      <li><button onClick={testRequest.bind(null, { showType: 9 })}>showType 9</button></li>
-    </ul>
-  </>);
-}
+  return (
+    <>
+      <h1>@umijs/plugin-request</h1>
+      <h2>Users</h2>
+      <ul>
+        {users.map(u => (
+          <li key={u}>{u}</li>
+        ))}
+      </ul>
+      <h2>Test Request</h2>
+      <ul>
+        <li>
+          <button onClick={testRequest.bind(null, { showType: 0 })}>showType 0</button>
+        </li>
+        <li>
+          <button onClick={testRequest.bind(null, { showType: 1 })}>showType 1</button>
+        </li>
+        <li>
+          <button onClick={testRequest.bind(null, { showType: 4 })}>showType 4</button>
+        </li>
+        <li>
+          <button onClick={testRequest.bind(null, { showType: 9 })}>showType 9</button>
+        </li>
+      </ul>
+    </>
+  );
+};
 ```
 
 ### 3 Add config in 'src/app.ts'
@@ -74,7 +86,7 @@ export const request = {
   prefix: '/api/v1',
   suffix: '.json',
   timeout: 3000,
-}
+};
 ```
 
 #### ResponseParser middleware
@@ -88,7 +100,7 @@ export interface response {
   success: boolean; // if request is success
   data?: any; // response data
   errorCode?: string; // code for errorType
-  errorMessage?: string; // message display to user 
+  errorMessage?: string; // message display to user
   showType?: number; // error display type： 0 silent; 1 message; 4 notification; 9 page
   traceId?: string; // Convenient for back-end Troubleshooting: unique request ID
   host?: string; // onvenient for backend Troubleshooting: host of current access server
@@ -102,33 +114,17 @@ If the interface structure of the project is inconsistent with the standard inte
 // The configuration is as follows:
 
 export const request = {
-  responseParsers: [
-    {
-      adaptor: {
-        success: 'ok',
-        data: 'result',
-        errorCode: 'error.code', // support nested parsing
-        errorMessage: 'error.msg',
-      }
-    }
-  ]
-}
-
-// Function is also supported
-export const request = {
-  responseParsers: [
-    {
-      adaptor: (response) => {
-        return {
-          success: response.ok,
-          data: response.result,
-          errorCode: response.error.code,
-          errorMessage: response.error.msg,
-        }
-      }
-    }
-  ]
-}
+  errorConfig: {
+    adaptor: data => {
+      return {
+        success: data.ok,
+        data: data.result,
+        errorCode: data.error.code,
+        errorMessage: data.error.msg,
+      };
+    },
+  },
+};
 ```
 
 ##### Interface Resolution and Error Handling
@@ -136,57 +132,30 @@ export const request = {
 1. When the response status code is not 200, the errorhandler will still be triggered. Developers can override the default errorhandler through configuration
 2. When the response status code is 200 and body.success is true, no processing will be performed
 3. When the response status code is 200 and 'body.success' is false, different error handling will be done according to the value of 'body.showtype' (default is 4)
-    1. showType === 0, silent, do nonting;
-    2. showType === 1, light message： antd.message.error(body.errorMessage)
-    3. showType === 4, hard notification： antd.notification.open({ message: 'Request failed！', description: body.errorMessage })
-    4. showType === 9, page redirect：like antd-pro，default page is '/exception?errorCode=xxx&errorMessage=xxx'
+   - showType === 0, silent, do nonting;
+   - showType === 1, warn message： antd.message.warn(body.errorMessage)
+   - showType === 2, error message： antd.message.error(body.errorMessage)
+   - showType === 4, notification： antd.notification.open({ message: 'Request failed！', description: body.errorMessage })
+   - showType === 9, page redirect：like antd-pro，default page is '/exception?errorCode=xxx&errorMessage=xxx'
 
 If you want to override all or part of the default error handling, just configure the handler:
 
 ```javascript
 export const request = {
-  responseParsers: [
-    {
-      handler: (showType, response, request, config, defaultHandle) => {
-        // Override error handling with showtype 4
-        if (showType === 4) {
-          notification({
-            message: 'Network error~',
-            description: errorMessage,
-          })
-          return;
-        }
-        // The rest is handled by the default exception handler
-        defaultHandler(showType, response, request, config);
+  errorHandler: error => {
+    if (error.name === 'BizError') {
+      if (error.info.showType === 9) {
+        // your code
       }
     }
-  ]
-}
+  },
+  errorConfig: {
+    errorPage: '/exception', // redirect when show type is 9
+  },
+};
 ```
 
-If you do different processing for different interfaces, you can use the include combination to:
-
-```javascript
-export const request = {
-  responseParsers: [
-    {
-      include: /^\/api\/v1/ig,
-      adaptor: {
-        success: 'ok',
-        data: 'result',
-        errorCode: 'error.code',
-        errorMessage: 'error.msg',
-      }
-    }, // Interface adaptation for the interface begin with '/API/v1'
-    {
-      include: /^\/api\/v2/ig,
-      handler: (showType, response, config, defaultHandler) => {
-        // error handler
-      }
-    }, // Interface adaptation for the interface begin with '/API/v2'
-  ]// The rest go to default error handler
-}
-```
+If you want to skip errorHander on some request, we extend a request option `skipErrorHandler`, you can set it ture for skip default error handler.
 
 #### Middleware
 
@@ -204,9 +173,9 @@ export const request = {
       console.log('B before');
       await next();
       console.log('B after');
-    }
-  ]
-}
+    },
+  ],
+};
 ```
 
 Full example can find in [./example](https://github.com/umijs/plugin-request/tree/master/example).
@@ -215,7 +184,7 @@ Full example can find in [./example](https://github.com/umijs/plugin-request/tre
 
 1. npm i && npm i umi@latest
 
-2. npm run build
+2. npm run build -- -w
 
 3. cd example
 

@@ -7,10 +7,8 @@ export default function(api: IApi) {
   const source = join(__dirname, '..', 'src', 'request');
   api.addUmiExports([
     {
-      specifiers: ['request'],
+      exportAll: true,
       source,
     },
   ]);
-
-  api.addEntryCode(`require('${source}').__init_request__();`);
 }
