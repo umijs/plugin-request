@@ -110,4 +110,16 @@ describe('normal request', () => {
       expect(e.message).toEqual('1001');
     }
   });
+
+  test('ctx when httperror', async () => {
+    server.get('/test/ctx2', (req, res) => {
+      res.status(404);
+      res.send('ctx2');
+    });
+    try {
+      const response = await request(prefix('/test/ctx2'));
+    } catch (e) {
+      expect(e.message).toEqual('1001');
+    }
+  });
 });

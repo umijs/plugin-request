@@ -48,6 +48,23 @@ describe('normal request', () => {
     });
   });
 
+  test('with getResponse', async () => {
+    const rawData = {
+      success: true,
+      data: {
+        list: ['test'],
+      },
+      errorMessage: 'test message',
+    };
+    server.get('/test/success', (req, res) => {
+      res.send(rawData);
+    });
+    const response = await request(prefix('/test/success'), {
+      getResponse: true,
+    });
+    expect(response.data).toEqual(rawData);
+  });
+
   test('failed', async () => {
     const rawData = {
       success: false,

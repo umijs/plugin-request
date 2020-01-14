@@ -9,7 +9,7 @@ import history from '@@/history';
 export interface RequestConfig extends RequestOptionsInit {
   errorConfig?: {
     errorPage?: string;
-    adaptor?: (resData: any, ctx?: Context) => ErrorInfoStructure;
+    adaptor?: (resData: any, ctx: Context) => ErrorInfoStructure;
   };
   middlewares?: OnionMiddleware[];
 }
@@ -36,6 +36,8 @@ interface ErrorInfoStructure {
 interface RequestError extends Error {
   data?: any;
   info?: ErrorInfoStructure;
+  request?: Context['req'];
+  response?: Context['res'];
 }
 
 const DEFAULT_ERROR_PAGE = '/exception';
@@ -45,9 +47,17 @@ const errorAdaptor = requestConfig.errorConfig?.adaptor || (resData => resData);
 
 export const request = extend({
   errorHandler: (error: RequestError) => {
+    // @ts-ignore
+    if (error?.request?.options?.skipErrorHandler) {
+      throw error;
+    }
     let errorInfo: ErrorInfoStructure | undefined;
-    if (error.name === 'ResponseError' && error.data) {
-      errorInfo = errorAdaptor(error.data);
+    if (error.name === 'ResponseError' && error.data && error.request) {
+      const ctx: Context = {
+        req: error.request,
+        res: error.response,
+      };
+      errorInfo = errorAdaptor(error.data, ctx);
       error.message = errorInfo?.errorMessage || error.message;
       error.data = error.data;
       error.info = errorInfo;
@@ -99,6 +109,10 @@ export const request = extend({
 request.use(async (ctx, next) => {
   await next();
   const { req, res } = ctx;
+  // @ts-ignore
+  if (req.options?.skipErrorHandler) {
+    return;
+  }
   const { options } = req;
   const { getResponse } = options;
   const resData = getResponse ? res.data : res;

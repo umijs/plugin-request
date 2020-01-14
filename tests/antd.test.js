@@ -114,7 +114,7 @@ describe('antd error tip', () => {
     }
   });
 
-  test('silent', async () => {
+  test('notification', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -146,6 +146,46 @@ describe('antd error tip', () => {
       expect(e.message).toEqual(
         '/custom/errorPage?errorCode=505&errorMessage=test message',
       );
+    }
+  });
+
+  test('skipErrorHandler', async () => {
+    const rawData = {
+      success: false,
+      errorMessage: 'test message',
+      errorCode: '505',
+      showType: 9,
+    };
+    server.get('/test/skip', (req, res) => {
+      res.send(rawData);
+    });
+    const response = await request(prefix('/test/skip'), {
+      skipErrorHandler: true,
+    });
+    expect(response).toEqual({
+      ...rawData,
+      testMiddlewares: 'middlewares works',
+    });
+  });
+
+  test('skipErrorHandler when http error', async () => {
+    const rawData = {
+      success: false,
+      errorMessage: 'test message',
+      errorCode: '505',
+      showType: 1,
+    };
+    server.get('/test/skip', (req, res) => {
+      res.status(500);
+      res.send(rawData);
+    });
+    try {
+      const response = await request(prefix('/test/skip'), {
+        skipErrorHandler: true,
+      });
+    } catch (e) {
+      expect(e.name).toEqual('ResponseError');
+      expect(e.message).toEqual('http error');
     }
   });
 });

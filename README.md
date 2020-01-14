@@ -155,6 +155,8 @@ export const request = {
 };
 ```
 
+If you want to skip errorHander on some request, we extend a request option `skipErrorHandler`, you can set it ture for skip default error handler.
+
 #### Middleware
 
 The responseParser middleware is built in. You can expand middlewares through 'middlewares' config:
