@@ -30,8 +30,7 @@ describe('normal request', () => {
 
   const prefix = api => `${server.url}${api}`;
 
-  it('success', async () => {
-    // success
+  test('success', async () => {
     const rawData = {
       success: true,
       data: {
@@ -49,8 +48,7 @@ describe('normal request', () => {
     });
   });
 
-  it('failed', async () => {
-    // failed
+  test('failed', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -71,8 +69,7 @@ describe('normal request', () => {
     }
   });
 
-  it('http failed', async () => {
-    // failed
+  test('http failed', async () => {
     const rawData = {
       success: false,
       data: { list: [2] },

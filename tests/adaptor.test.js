@@ -5,9 +5,15 @@ jest.mock(
   'runtimeConfig',
   () => {
     return {
-      timeout: 1000,
+      timeout: 1001,
       errorConfig: {
-        adaptor: data => {
+        adaptor: (data, ctx) => {
+          if (/ctx/.test(ctx?.req.url)) {
+            throw new Error(ctx.req.options.timeout);
+          }
+          if (typeof data !== 'object') {
+            return data;
+          }
           return {
             ...data,
             errorMessage: data.message,
@@ -32,7 +38,7 @@ describe('normal request', () => {
 
   const prefix = api => `${server.url}${api}`;
 
-  it('success', async () => {
+  test('success', async () => {
     // success
     const rawData = {
       success: true,
@@ -48,7 +54,7 @@ describe('normal request', () => {
     expect(response).toEqual(rawData);
   });
 
-  it('failed', async () => {
+  test('failed', async () => {
     // failed
     const rawData = {
       success: false,
@@ -66,7 +72,7 @@ describe('normal request', () => {
     }
   });
 
-  it('http failed', async () => {
+  test('http failed', async () => {
     // failed
     const rawData = {
       success: false,
@@ -83,6 +89,25 @@ describe('normal request', () => {
       expect(e.name).toEqual('ResponseError');
       expect(e.message).toEqual('test message');
       expect(e.data).toEqual(rawData);
+    }
+  });
+
+  test('not a json', async () => {
+    server.get('/test/notjson', (req, res) => {
+      res.send('ab&ddd12132');
+    });
+    const response = await request(prefix('/test/notjson'));
+    expect(response).toEqual('ab&ddd12132');
+  });
+
+  test('ctx', async () => {
+    server.get('/test/ctx', (req, res) => {
+      res.send('ctx');
+    });
+    try {
+      const response = await request(prefix('/test/ctx'));
+    } catch (e) {
+      expect(e.message).toEqual('1001');
     }
   });
 });

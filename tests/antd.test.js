@@ -66,7 +66,7 @@ describe('antd error tip', () => {
 
   const prefix = api => `${server.url}${api}`;
 
-  it('antd message warn', async () => {
+  test('antd message warn', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -82,7 +82,7 @@ describe('antd error tip', () => {
     }
   });
 
-  it('antd message warn', async () => {
+  test('antd message warn', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -98,7 +98,7 @@ describe('antd error tip', () => {
     }
   });
 
-  it('silent', async () => {
+  test('silent', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -114,7 +114,7 @@ describe('antd error tip', () => {
     }
   });
 
-  it('silent', async () => {
+  test('silent', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
@@ -130,7 +130,7 @@ describe('antd error tip', () => {
     }
   });
 
-  it('redirect', async () => {
+  test('redirect', async () => {
     const rawData = {
       success: false,
       errorMessage: 'test message',
