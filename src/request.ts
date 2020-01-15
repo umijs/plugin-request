@@ -3,8 +3,17 @@
  */
 import { extend, Context, RequestOptionsInit, OnionMiddleware } from 'umi-request';
 import { message, notification } from 'antd';
+import useAPI from '@umijs/use-api';
 // @ts-ignore
 import history from '@@/history';
+
+// TODO typescript support
+export const useRequest = (params: any, options?: any) => {
+  return useAPI(params, {
+    /*FRS*/ formatResult: res => res?.data /*FRE*/,
+    ...options,
+  });
+};
 
 export interface RequestConfig extends RequestOptionsInit {
   errorConfig?: {
