@@ -39,9 +39,8 @@ describe('normal request', () => {
   const prefix = api => `${server.url}${api}`;
 
   test('success', async () => {
-    // success
     const rawData = {
-      success: true,
+      // success: true, default is success
       data: {
         list: ['test'],
       },

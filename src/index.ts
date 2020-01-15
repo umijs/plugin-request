@@ -1,5 +1,6 @@
 import { IApi } from 'umi-types';
 import { join } from 'path';
+import { winPath } from 'umi-utils';
 import assert from 'assert';
 import { readFileSync } from 'fs';
 
@@ -37,7 +38,7 @@ export default function(api: IApi, options: RequestOptions) {
   api.addUmiExports([
     {
       exportAll: true,
-      source: join(api.paths.absTmpDirPath, namespace, 'request'),
+      source: winPath(join(api.paths.absTmpDirPath, namespace, 'request')),
     },
   ]);
 }

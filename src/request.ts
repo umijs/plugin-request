@@ -11,6 +11,7 @@ import history from '@@/history';
 export const useRequest = (params: any, options?: any) => {
   return useAPI(params, {
     /*FRS*/ formatResult: res => res?.data /*FRE*/,
+    requestMehod: request,
     ...options,
   });
 };
