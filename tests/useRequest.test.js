@@ -12,19 +12,13 @@ jest.mock(
 
 describe('normal request', () => {
   let server;
-  let container;
 
   beforeAll(async () => {
     server = await createTestServer();
-    container = document.createElement('div');
-    document.body.appendChild(container);
   });
 
   afterAll(() => {
     server.close();
-    unmountComponentAtNode(container);
-    container.remove();
-    container = null;
   });
 
   const prefix = api => `${server.url}${api}`;
