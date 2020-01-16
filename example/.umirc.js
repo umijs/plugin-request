@@ -2,7 +2,12 @@ import { join } from 'path';
 
 export default {
   plugins: [
-    [join(__dirname, '..', require('../package').main || 'index.js')],
+    [
+      join(__dirname, '..', require('../package').main || 'index.js'),
+      {
+        dataField: 'result',
+      },
+    ],
     [
       'umi-plugin-react',
       {
@@ -19,4 +24,4 @@ export default {
       },
     ],
   ],
-}
+};

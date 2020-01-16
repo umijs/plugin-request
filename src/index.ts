@@ -1,5 +1,5 @@
 import { IApi } from 'umi-types';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import assert from 'assert';
 import { readFileSync } from 'fs';
 
@@ -30,7 +30,15 @@ export default function(api: IApi, options: RequestOptions) {
         requestTemplate
           .replace(/\/\*FRS\*\/(.+)\/\*FRE\*\//, formatResultStr)
           .replace(/\['data'\]/g, `['${dataField}']`)
-          .replace(/data: T;/, `${dataField}: T;`),
+          .replace(/data: T;/, `${dataField}: T;`)
+          .replace(
+            /umi-request/g,
+            api.winPath(dirname(require.resolve('umi-request/package'))),
+          )
+          .replace(
+            /@umijs\/use-request/g,
+            api.winPath(dirname(require.resolve('@umijs/use-request/package'))),
+          ),
       );
     } catch (e) {
       api.log.error(e);
