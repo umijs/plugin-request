@@ -21,7 +21,7 @@ import {
   PaginatedOptionsWithFormat,
   PaginatedParams,
   PaginatedResult,
-} from '@umijs/use-api/lib/types';
+} from '@umijs/use-request/lib/types';
 
 type ResultWithData<T = any> = { data: T; [key: string]: any };
 
