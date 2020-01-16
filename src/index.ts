@@ -15,7 +15,7 @@ export default function(api: IApi, options: RequestOptions) {
   const source = join(__dirname, '..', 'src', 'request.ts');
   const requestTemplate = readFileSync(source, 'utf-8');
   const namespace = 'plugin-request';
-  assert(/^[a-zA-Z\.]+$/.test(dataField), 'dataField should match /^[a-zA-Z.]+$/');
+  assert(/^[a-zA-Z]+$/.test(dataField), 'dataField should match /^[a-zA-Z]+$/');
 
   api.onGenerateFiles(() => {
     try {
@@ -28,7 +28,10 @@ export default function(api: IApi, options: RequestOptions) {
       }
       api.writeTmpFile(
         `${namespace}/request.ts`,
-        requestTemplate.replace(/\/\*FRS\*\/(.+)\/\*FRE\*\//, formatResultStr),
+        requestTemplate
+          .replace(/\/\*FRS\*\/(.+)\/\*FRE\*\//, formatResultStr)
+          .replace(/\['data'\]/g, `['${dataField}']`)
+          .replace(/data: T;/, `${dataField}: T;`),
       );
     } catch (e) {
       api.log.error(e);

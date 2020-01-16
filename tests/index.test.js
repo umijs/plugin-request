@@ -16,13 +16,23 @@ describe('plugin-request', () => {
         writeTmpFile,
       },
       {
-        dataField: 'result.data',
+        dataField: 'result',
       },
     );
 
     expect(writeTmpFile).toHaveBeenLastCalledWith(
       'plugin-request/request.ts',
-      expect.stringContaining('result => result?.result.data'),
+      expect.stringContaining('result => result?.result'),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining("['result']"),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('result: T;'),
     );
   });
 });

@@ -3,18 +3,65 @@
  */
 import { extend, Context, RequestOptionsInit, OnionMiddleware } from 'umi-request';
 import { message, notification } from 'antd';
-import useAPI from '@umijs/use-api';
 // @ts-ignore
 import history from '@@/history';
+import useAPI from '@umijs/use-api';
+import {
+  BaseOptions,
+  BasePaginatedOptions,
+  BaseResult,
+  CombineService,
+  LoadMoreFormatReturn,
+  LoadMoreOptions,
+  LoadMoreOptionsWithFormat,
+  LoadMoreParams,
+  LoadMoreResult,
+  OptionsWithFormat,
+  PaginatedFormatReturn,
+  PaginatedOptionsWithFormat,
+  PaginatedParams,
+  PaginatedResult,
+} from '@umijs/use-api/lib/types';
 
-// TODO typescript support
-export const useRequest = (params: any, options?: any) => {
-  return useAPI(params, {
+type ResultWithData<T = any> = { data: T; [key: string]: any };
+
+function useRequest<R = any, P extends any[] = any, U = any, UU extends U = any>(
+  service: CombineService<R, P>,
+  options: OptionsWithFormat<R, P, U, UU>,
+): BaseResult<U, P>;
+function useRequest<R extends ResultWithData = any, P extends any[] = any>(
+  service: CombineService<R, P>,
+  options?: BaseOptions<R['data'], P>,
+): BaseResult<R['data'], P>;
+function useRequest<R = any, Item = any, U extends Item = any>(
+  service: CombineService<R, LoadMoreParams>,
+  options: LoadMoreOptionsWithFormat<R, Item, U>,
+): LoadMoreResult<Item>;
+function useRequest<Item = any, U extends Item = any>(
+  service: CombineService<ResultWithData<LoadMoreFormatReturn<Item>>, LoadMoreParams>,
+  options: LoadMoreOptions<U>,
+): LoadMoreResult<Item>;
+
+function useRequest<R = any, Item = any, U extends Item = any>(
+  service: CombineService<R, PaginatedParams<U>>,
+  options: PaginatedOptionsWithFormat<R, Item, U>,
+): PaginatedResult<Item>;
+function useRequest<Item = any, U extends Item = any>(
+  service: CombineService<
+    ResultWithData<PaginatedFormatReturn<Item>>,
+    PaginatedParams<U>
+  >,
+  options: BasePaginatedOptions<U>,
+): PaginatedResult<Item>;
+function useRequest(service: any, options: any = {}) {
+  return useAPI(service, {
     /*FRS*/ formatResult: res => res?.data /*FRE*/,
     requestMehod: request,
     ...options,
   });
-};
+}
+
+export { useRequest };
 
 export interface RequestConfig extends RequestOptionsInit {
   errorConfig?: {
