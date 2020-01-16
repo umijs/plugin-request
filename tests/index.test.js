@@ -12,6 +12,7 @@ describe('plugin-request', () => {
         paths: {
           absTmpDirPath: '/test/page/.umi',
         },
+        winPath() {},
         addUmiExports() {},
         writeTmpFile,
       },
