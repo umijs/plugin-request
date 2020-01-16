@@ -5,7 +5,7 @@ import { extend, Context, RequestOptionsInit, OnionMiddleware } from 'umi-reques
 import { message, notification } from 'antd';
 // @ts-ignore
 import history from '@@/history';
-import useAPI from '@umijs/use-api';
+import useUmiRequest from '@umijs/use-request';
 import {
   BaseOptions,
   BasePaginatedOptions,
@@ -54,7 +54,7 @@ function useRequest<Item = any, U extends Item = any>(
   options: BasePaginatedOptions<U>,
 ): PaginatedResult<Item>;
 function useRequest(service: any, options: any = {}) {
-  return useAPI(service, {
+  return useUmiRequest(service, {
     /*FRS*/ formatResult: res => res?.data /*FRE*/,
     requestMehod: request,
     ...options,
