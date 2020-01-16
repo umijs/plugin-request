@@ -12,7 +12,9 @@ describe('plugin-request', () => {
         paths: {
           absTmpDirPath: '/test/page/.umi',
         },
-        winPath() {},
+        winPath() {
+          return '/winpathtest';
+        },
         addUmiExports() {},
         writeTmpFile,
       },
@@ -34,6 +36,11 @@ describe('plugin-request', () => {
     expect(writeTmpFile).toHaveBeenLastCalledWith(
       'plugin-request/request.ts',
       expect.stringContaining('result: T;'),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('/winpathtest'),
     );
   });
 });

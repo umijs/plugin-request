@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { request } from 'umi';
+import React from 'react';
+import { request, useRequest } from 'umi';
 
 async function testRequest({ showType }) {
   const data = await request(`/api/users/failure?showType=${showType}`).catch(e => {
@@ -18,15 +18,9 @@ async function testRequestError() {
 }
 
 export default () => {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { data: users } = await request(`/api/users`);
-      console.log('get userData:', users);
-      setUsers(users);
-    })();
-  }, []);
+  const { data: users = [] } = useRequest(() => {
+    return request(`/api/users`);
+  });
 
   return (
     <>
