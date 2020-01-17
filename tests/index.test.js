@@ -1,27 +1,28 @@
 import pluginFunc from '../src/index';
 
 describe('plugin-request', () => {
+  const getMockAPI = (writeTmpFile = () => {}) => {
+    return {
+      addRuntimePluginKey() {},
+      onGenerateFiles(handler) {
+        handler();
+      },
+      paths: {
+        absTmpDirPath: '/test/page/.umi',
+      },
+      winPath() {
+        return '/winpathtest';
+      },
+      addUmiExports() {},
+      writeTmpFile,
+    };
+  };
+
   test('dataField', () => {
     const writeTmpFile = jest.fn();
-    pluginFunc(
-      {
-        addRuntimePluginKey() {},
-        onGenerateFiles(handler) {
-          handler();
-        },
-        paths: {
-          absTmpDirPath: '/test/page/.umi',
-        },
-        winPath() {
-          return '/winpathtest';
-        },
-        addUmiExports() {},
-        writeTmpFile,
-      },
-      {
-        dataField: 'result',
-      },
-    );
+    pluginFunc(getMockAPI(writeTmpFile), {
+      dataField: 'result',
+    });
 
     expect(writeTmpFile).toHaveBeenLastCalledWith(
       'plugin-request/request.ts',
@@ -42,5 +43,21 @@ describe('plugin-request', () => {
       'plugin-request/request.ts',
       expect.stringContaining('/winpathtest'),
     );
+  });
+
+  test('dataField format', () => {
+    const writeTmpFile = jest.fn();
+    pluginFunc(getMockAPI(writeTmpFile), {
+      dataField: '',
+    });
+    expect(writeTmpFile).toHaveBeenCalled();
+
+    try {
+      pluginFunc(getMockAPI(), {
+        dataField: '&12',
+      });
+    } catch (e) {
+      expect(e.message).not.toBeNull();
+    }
   });
 });
