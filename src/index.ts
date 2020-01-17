@@ -14,7 +14,7 @@ export default function(api: IApi, options: RequestOptions) {
   const source = join(__dirname, '..', 'src', 'request.ts');
   const requestTemplate = readFileSync(source, 'utf-8');
   const namespace = 'plugin-request';
-  assert(/^[a-zA-Z]+$/.test(dataField), 'dataField should match /^[a-zA-Z]+$/');
+  assert(/^[a-zA-Z]*$/.test(dataField), 'dataField should match /^[a-zA-Z]*$/');
 
   api.onGenerateFiles(() => {
     try {
