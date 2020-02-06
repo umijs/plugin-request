@@ -29,8 +29,8 @@ export default function(api: IApi, options: RequestOptions) {
         `${namespace}/request.ts`,
         requestTemplate
           .replace(/\/\*FRS\*\/(.+)\/\*FRE\*\//, formatResultStr)
-          .replace(/\['data'\]/g, `['${dataField}']`)
-          .replace(/data: T;/, `${dataField}: T;`)
+          .replace(/\['data'\]/g, dataField ? `['${dataField}']` : '')
+          .replace(/data: T;/, dataField ? `${dataField}: T;` : '')
           .replace(
             /umi-request/g,
             api.winPath(dirname(require.resolve('umi-request/package'))),
