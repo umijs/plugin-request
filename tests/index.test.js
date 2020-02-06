@@ -52,6 +52,26 @@ describe('plugin-request', () => {
     });
     expect(writeTmpFile).toHaveBeenCalled();
 
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('type ResultWithData<T = any> = {  [key: string]: any };'),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('BaseOptions<R, P>'),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('BaseResult<R, P>'),
+    );
+
+    expect(writeTmpFile).toHaveBeenLastCalledWith(
+      'plugin-request/request.ts',
+      expect.stringContaining('result => result'),
+    );
+
     try {
       pluginFunc(getMockAPI(), {
         dataField: '&12',
