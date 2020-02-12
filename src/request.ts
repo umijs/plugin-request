@@ -23,7 +23,7 @@ import {
   PaginatedResult,
 } from '@umijs/use-request/lib/types';
 
-type ResultWithData<T = any> = { data: T; [key: string]: any };
+type ResultWithData<T = any> = { data: T;[key: string]: any };
 
 function useRequest<R = any, P extends any[] = any, U = any, UU extends U = any>(
   service: CombineService<R, P>,
@@ -33,23 +33,23 @@ function useRequest<R extends ResultWithData = any, P extends any[] = any>(
   service: CombineService<R, P>,
   options?: BaseOptions<R['data'], P>,
 ): BaseResult<R['data'], P>;
-function useRequest<R = any, Item = any, U extends Item = any>(
-  service: CombineService<R, LoadMoreParams>,
-  options: LoadMoreOptionsWithFormat<R, Item, U>,
-): LoadMoreResult<Item>;
-function useRequest<Item = any, U extends Item = any>(
-  service: CombineService<ResultWithData<LoadMoreFormatReturn<Item>>, LoadMoreParams>,
-  options: LoadMoreOptions<U>,
-): LoadMoreResult<Item>;
+function useRequest<R extends LoadMoreFormatReturn = any, RR = any>(
+  service: CombineService<RR, LoadMoreParams<R>>,
+  options: LoadMoreOptionsWithFormat<R, RR>,
+): LoadMoreResult<R>;
+function useRequest<R extends ResultWithData<LoadMoreFormatReturn> = any, RR extends R = any>(
+  service: CombineService<R, LoadMoreParams<R['data']>>,
+  options: LoadMoreOptions<RR['data']>,
+): LoadMoreResult<R['data']>;
 
 function useRequest<R = any, Item = any, U extends Item = any>(
-  service: CombineService<R, PaginatedParams<U>>,
+  service: CombineService<R, PaginatedParams>,
   options: PaginatedOptionsWithFormat<R, Item, U>,
 ): PaginatedResult<Item>;
 function useRequest<Item = any, U extends Item = any>(
   service: CombineService<
     ResultWithData<PaginatedFormatReturn<Item>>,
-    PaginatedParams<U>
+    PaginatedParams
   >,
   options: BasePaginatedOptions<U>,
 ): PaginatedResult<Item>;
