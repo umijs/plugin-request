@@ -208,13 +208,18 @@ const getRequestMethod = () => {
 };
 
 interface RequestMethodInUmi<R = false> {
-  <T = any>(url: string, options: RequestOptionsWithResponse): Promise<
-    RequestResponse<T>
-  >;
-  <T = any>(url: string, options: RequestOptionsWithoutResponse): Promise<T>;
-  <T = any>(url: string, options?: RequestOptionsInit): R extends true
-    ? Promise<RequestResponse<T>>
-    : Promise<T>;
+  <T = any>(
+    url: string,
+    options: RequestOptionsWithResponse & { skipErrorHandler?: boolean },
+  ): Promise<RequestResponse<T>>;
+  <T = any>(
+    url: string,
+    options: RequestOptionsWithoutResponse & { skipErrorHandler?: boolean },
+  ): Promise<T>;
+  <T = any>(
+    url: string,
+    options?: RequestOptionsInit & { skipErrorHandler?: boolean },
+  ): R extends true ? Promise<RequestResponse<T>> : Promise<T>;
 }
 const request: RequestMethodInUmi = (url: any, options: any) => {
   const requestMehod = getRequestMethod();
