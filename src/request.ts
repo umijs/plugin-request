@@ -64,7 +64,7 @@ function useRequest<Item = any, U extends Item = any>(
 function useRequest(service: any, options: any = {}) {
   return useUmiRequest(service, {
     /*FRS*/ formatResult: res => res?.data /*FRE*/,
-    requestMehod: request,
+    requestMethod: request,
     ...options,
   });
 }
@@ -222,8 +222,8 @@ interface RequestMethodInUmi<R = false> {
   ): R extends true ? Promise<RequestResponse<T>> : Promise<T>;
 }
 const request: RequestMethodInUmi = (url: any, options: any) => {
-  const requestMehod = getRequestMethod();
-  return requestMehod(url, options);
+  const requestMethod = getRequestMethod();
+  return requestMethod(url, options);
 };
 
 export { request, useRequest };
