@@ -1,6 +1,6 @@
 {
   "name": "@umijs/plugin-request",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Integrate umi-request deeply to umi.",
   "license": "MIT",
   "repository": {
