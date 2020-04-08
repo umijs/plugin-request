@@ -8,11 +8,11 @@ jest.mock(
       errorConfig: {
         errorPage: '/custom/errorPage',
       },
-      middlewares: [
+      middleware: [
         async (ctx, next) => {
           await next();
           const { res } = ctx;
-          res.testMiddlewares = 'middlewares works';
+          res.testMiddleware = 'middleware works';
         },
       ],
     };
@@ -164,7 +164,7 @@ describe('antd error tip', () => {
     });
     expect(response).toEqual({
       ...rawData,
-      testMiddlewares: 'middlewares works',
+      testMiddleware: 'middleware works',
     });
   });
 

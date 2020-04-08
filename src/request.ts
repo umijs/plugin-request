@@ -81,7 +81,7 @@ export interface RequestConfig extends RequestOptionsInit {
     errorPage?: string;
     adaptor?: (resData: any, ctx: Context) => ErrorInfoStructure;
   };
-  middlewares?: OnionMiddleware[];
+  middleware?: OnionMiddleware[];
 }
 
 export enum ErrorShowType {
@@ -138,7 +138,6 @@ const getRequestMethod = () => {
         };
         errorInfo = errorAdaptor(error.data, ctx);
         error.message = errorInfo?.errorMessage || error.message;
-        error.data = error.data;
         error.info = errorInfo;
       }
       errorInfo = error.info;
@@ -196,7 +195,7 @@ const getRequestMethod = () => {
     const { getResponse } = options;
     const resData = getResponse ? res.data : res;
     const errorInfo = errorAdaptor(resData, ctx);
-    if (errorInfo.success === false) {
+    if (!errorInfo.success) {
       // 抛出错误到 errorHandler 中处理
       const error: RequestError = new Error(errorInfo.errorMessage);
       error.name = 'BizError';
@@ -206,9 +205,9 @@ const getRequestMethod = () => {
     }
   });
 
-  // Add user custom middlewares
-  const customMiddlewares = requestConfig.middlewares || [];
-  customMiddlewares.forEach(mw => {
+  // Add user custom middleware
+  const customMiddleware = requestConfig.middleware || [];
+  customMiddleware.forEach(mw => {
     requestMethodInstance.use(mw);
   });
   return requestMethodInstance;
