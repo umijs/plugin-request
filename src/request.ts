@@ -14,7 +14,7 @@ import {
 import { message, notification } from 'antd';
 // @ts-ignore
 import history from '@@/history';
-import useUmiRequest from '@umijs/use-request';
+import useUmiRequest from '@ahooksjs/use-request';
 import {
   BaseOptions,
   BasePaginatedOptions,
@@ -30,7 +30,7 @@ import {
   PaginatedOptionsWithFormat,
   PaginatedParams,
   PaginatedResult,
-} from '@umijs/use-request/lib/types';
+} from '@ahooksjs/use-request/lib/types';
 
 type ResultWithData<T = any> = { data: T; [key: string]: any };
 

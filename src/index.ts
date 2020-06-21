@@ -36,8 +36,8 @@ export default function(api: IApi, options: RequestOptions) {
             api.winPath(dirname(require.resolve('umi-request/package'))),
           )
           .replace(
-            /@umijs\/use-request/g,
-            api.winPath(dirname(require.resolve('@umijs/use-request/package'))),
+            /@ahooksjs\/use-request/g,
+            api.winPath(dirname(require.resolve('@ahooksjs/use-request/package'))),
           ),
       );
     } catch (e) {
