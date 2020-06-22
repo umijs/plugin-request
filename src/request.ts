@@ -32,7 +32,7 @@ import {
   PaginatedResult,
 } from '@ahooksjs/use-request/lib/types';
 
-type ResultWithData<T = any> = { data: T;[key: string]: any };
+type ResultWithData<T = any> = { data: T; [key: string]: any };
 
 function useRequest<R = any, P extends any[] = any, U = any, UU extends U = any>(
   service: CombineService<R, P>,
