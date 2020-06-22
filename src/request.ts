@@ -14,7 +14,7 @@ import {
 import { message, notification } from 'antd';
 // @ts-ignore
 import history from '@@/history';
-import useUmiRequest from '@ahooksjs/use-request';
+import useUmiRequest, { UseRequestProvider } from '@ahooksjs/use-request';
 import {
   BaseOptions,
   BasePaginatedOptions,
@@ -32,7 +32,7 @@ import {
   PaginatedResult,
 } from '@ahooksjs/use-request/lib/types';
 
-type ResultWithData<T = any> = { data: T; [key: string]: any };
+type ResultWithData<T = any> = { data: T;[key: string]: any };
 
 function useRequest<R = any, P extends any[] = any, U = any, UU extends U = any>(
   service: CombineService<R, P>,
@@ -233,4 +233,4 @@ const request: RequestMethodInUmi = (url: any, options: any) => {
   return requestMethod(url, options);
 };
 
-export { request, useRequest };
+export { request, useRequest, UseRequestProvider };
