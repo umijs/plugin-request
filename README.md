@@ -159,11 +159,11 @@ If you want to skip errorHander on some request, we extend a request option `ski
 
 #### Middleware
 
-The responseParser middleware is built in. You can expand middlewares through 'middlewares' config:
+The responseParser middleware is built in. You can expand middleware through 'middleware' config:
 
 ```javascript
 export const request = {
-  middlewares: [
+  middleware: [
     async function middlewareA(ctx, next) {
       console.log('A before');
       await next();

@@ -5,11 +5,11 @@ jest.mock(
   'runtimeConfig',
   () => {
     return {
-      middlewares: [
+      middleware: [
         async (ctx, next) => {
           await next();
           const { res } = ctx;
-          res.testMiddlewares = 'middlewares works';
+          res.testMiddleware = 'middleware works';
         },
       ],
     };
@@ -44,7 +44,7 @@ describe('normal request', () => {
     const response = await request(prefix('/test/success'));
     expect(response).toEqual({
       ...rawData,
-      testMiddlewares: 'middlewares works',
+      testMiddleware: 'middleware works',
     });
   });
 
@@ -81,7 +81,7 @@ describe('normal request', () => {
       expect(e.message).toEqual('test message');
       expect(e.data).toEqual({
         ...rawData,
-        testMiddlewares: 'middlewares works',
+        testMiddleware: 'middleware works',
       });
     }
   });
