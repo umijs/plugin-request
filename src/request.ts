@@ -112,7 +112,7 @@ interface RequestError extends Error {
 
 const DEFAULT_ERROR_PAGE = '/exception';
 
-let requestMethodInstance: RequestMethod;
+export let requestMethodInstance: RequestMethod;
 const getRequestMethod = () => {
   if (requestMethodInstance) {
     // request method 已经示例化
