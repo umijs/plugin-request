@@ -140,8 +140,17 @@ const getRequestMethod = () => {
         error.message = errorInfo?.errorMessage || error.message;
         error.data = error.data;
         error.info = errorInfo;
+      } else if (error.name === 'AbortError'&& error.request) {
+        const ctx: Context = {
+          req: error.request,
+          res: error.response,
+        };
+        errorInfo = errorAdaptor(null, ctx);
+        error.info = errorInfo;
       }
+      
       errorInfo = error.info;
+
 
       if (errorInfo) {
         const errorMessage = errorInfo?.errorMessage;
