@@ -12,6 +12,17 @@ jest.mock(
           res.testMiddlewares = 'middlewares works';
         },
       ],
+      errorConfig: {
+        adaptor: (data, ctx) => {
+          if (ctx?.req.options.signal?.aborted) {
+            return {
+              ...data,
+              errorMessage: 'abort error message'
+            }
+          }
+          return data
+        },
+      },
     };
   },
   { virtual: true },
@@ -65,6 +76,35 @@ describe('normal request', () => {
     expect(response.data).toEqual(rawData);
   });
 
+  test('abort failed', async () => {
+    const rawData = {
+      success: false,
+      errorMessage: 'test message',
+      showType: 1,
+    };
+    const abc = new AbortController();
+    server.get('/test/failed', (req, res) => {
+      res.send(rawData);
+    });
+    try {
+      const req = request(prefix('/test/failed'), {
+        signal: abc.signal
+      });
+
+      abc.abort('Abort request')
+
+      const response = await req
+
+    } catch (e) {
+      expect(e.name).toEqual('BizError');
+      expect(e.message).toEqual('abort error message');
+      expect(e.data).toEqual({
+        ...rawData,
+        testMiddlewares: 'middlewares works',
+      });
+    }
+  });
+
   test('failed', async () => {
     const rawData = {
       success: false,
@@ -85,6 +125,7 @@ describe('normal request', () => {
       });
     }
   });
+
 
   test('http failed', async () => {
     const rawData = {
