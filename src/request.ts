@@ -145,7 +145,7 @@ const getRequestMethod = () => {
           req: error.request,
           res: error.response,
         };
-        errorInfo = errorAdaptor({}, ctx);
+        errorInfo = errorAdaptor(null, ctx);
         error.info = errorInfo;
       }
       
